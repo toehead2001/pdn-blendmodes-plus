@@ -34,7 +34,6 @@ namespace BlendModesPlus
         private BlendModes BlendMode;
         private bool SwapLayers;
         private Surface SurfaceToBlend;
-        private ImagePositions ImagePosition;
         private static readonly BinaryPixelOp normalOp = LayerBlendModeUtil.CreateCompositionOp(LayerBlendMode.Normal);
 
         private enum PropertyNames
@@ -194,8 +193,8 @@ namespace BlendModesPlus
         protected override void OnSetRenderInfo(PropertyBasedEffectConfigToken newToken, RenderArgs dstArgs, RenderArgs srcArgs)
         {
             ImageSources imageSource = (ImageSources)newToken.GetProperty<StaticListChoiceProperty>(PropertyNames.ImageSource).Value;
-            string FilePath = newToken.GetProperty<StringProperty>(PropertyNames.ImageFile).Value;
-            ImagePosition = (ImagePositions)newToken.GetProperty<StaticListChoiceProperty>(PropertyNames.ImagePosition).Value;
+            string filePath = newToken.GetProperty<StringProperty>(PropertyNames.ImageFile).Value;
+            ImagePositions imagePosition = (ImagePositions)newToken.GetProperty<StaticListChoiceProperty>(PropertyNames.ImagePosition).Value;
             BlendMode = (BlendModes)newToken.GetProperty<StaticListChoiceProperty>(PropertyNames.BlendMode).Value;
             SwapLayers = newToken.GetProperty<BooleanProperty>(PropertyNames.SwapLayers).Value;
 
@@ -207,12 +206,12 @@ namespace BlendModesPlus
 
             if (imageSource == ImageSources.File)
             {
-                if (File.Exists(FilePath))
+                if (File.Exists(filePath))
                 {
                     Bitmap loadedImage = null;
                     try
                     {
-                        using (Bitmap tmpBmp = new Bitmap(FilePath))
+                        using (Bitmap tmpBmp = new Bitmap(filePath))
                         {
                             loadedImage = new Bitmap(tmpBmp);
                         }
@@ -244,7 +243,7 @@ namespace BlendModesPlus
                     this.SurfaceToBlend.Clear(ColorBgra.Transparent);
                 }
 
-                switch (ImagePosition)
+                switch (imagePosition)
                 {
                     case ImagePositions.Fill:
                         Size ratioSize = new Size(imageSurface.Width, imageSurface.Height);
@@ -351,7 +350,7 @@ namespace BlendModesPlus
                 if (IsCancelRequested) return;
                 for (int x = rect.Left; x < rect.Right; x++)
                 {
-                    if (SwapLayers)
+                    if (this.SwapLayers)
                     {
                         colorBgra1 = this.SurfaceToBlend[x, y];
                         colorBgra2 = src[x, y];
