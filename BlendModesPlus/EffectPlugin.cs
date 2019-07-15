@@ -392,9 +392,9 @@ namespace BlendModesPlus
                     return ColorBgra.FromBgra(rhs.B, lhs.G, lhs.R, a3);
 
                 //case BlendModes.Clone:
-                //    byte r3 = 0;
-                //    byte g3 = 0;
-                //    byte b3 = 0;
+                //    byte r3 = byte.MinValue;
+                //    byte g3 = byte.MinValue;
+                //    byte b3 = byte.MinValue;
                 //    byte a4 = normalOp.Apply(lhs, rhs).A;
                 //    return ColorBgra.FromBgra(b3, g3, r3, a4);
 
@@ -411,9 +411,9 @@ namespace BlendModesPlus
                     return ColorBgra.FromBgra(color1.B, color1.G, color1.R, a5);
 
                 case BlendModes.ColorBurn:
-                    byte r4 = rhs.R == (byte)0 ? (byte)0 : Int32Util.ClampToByte(byte.MaxValue - (byte.MaxValue - lhs.R << 8) / rhs.R);
-                    byte g4 = rhs.G == (byte)0 ? (byte)0 : Int32Util.ClampToByte(byte.MaxValue - (byte.MaxValue - lhs.G << 8) / rhs.G);
-                    byte b4 = rhs.B == (byte)0 ? (byte)0 : Int32Util.ClampToByte(byte.MaxValue - (byte.MaxValue - lhs.B << 8) / rhs.B);
+                    byte r4 = rhs.R == byte.MinValue ? byte.MinValue : Int32Util.ClampToByte(byte.MaxValue - (byte.MaxValue - lhs.R << 8) / rhs.R);
+                    byte g4 = rhs.G == byte.MinValue ? byte.MinValue : Int32Util.ClampToByte(byte.MaxValue - (byte.MaxValue - lhs.G << 8) / rhs.G);
+                    byte b4 = rhs.B == byte.MinValue ? byte.MinValue : Int32Util.ClampToByte(byte.MaxValue - (byte.MaxValue - lhs.B << 8) / rhs.B);
                     byte a6 = normalOp.Apply(lhs, rhs).A;
                     return ColorBgra.FromBgra(b4, g4, r4, a6);
 
@@ -429,9 +429,9 @@ namespace BlendModesPlus
                     return ColorBgra.FromBgra(rhs.B, rhs.G, lhs.R, a8);
 
                 case BlendModes.Darken:
-                    byte r6 = Int32Util.ClampToByte((int)Math.Min(lhs.R, rhs.R));
-                    byte g6 = Int32Util.ClampToByte((int)Math.Min(lhs.G, rhs.G));
-                    byte b6 = Int32Util.ClampToByte((int)Math.Min(lhs.B, rhs.B));
+                    byte r6 = Math.Min(lhs.R, rhs.R);
+                    byte g6 = Math.Min(lhs.G, rhs.G);
+                    byte b6 = Math.Min(lhs.B, rhs.B);
                     byte a9 = normalOp.Apply(lhs, rhs).A;
                     return ColorBgra.FromBgra(b6, g6, r6, a9);
 
@@ -457,9 +457,9 @@ namespace BlendModesPlus
                     return ColorBgra.FromBgra(b9, g9, r9, a12);
 
                 //case BlendModes.Freeze:
-                //    byte r10 = rhs.R != (byte)0 ? DoubleUtil.ClampToByte(((double)byte.MaxValue - Math.Pow((double)(byte.MaxValue - lhs.R), 2.0)) / (double)rhs.R) : (byte)0;
-                //    byte g10 = rhs.G != (byte)0 ? DoubleUtil.ClampToByte(((double)byte.MaxValue - Math.Pow((double)(byte.MaxValue - lhs.G), 2.0)) / (double)rhs.G) : (byte)0;
-                //    byte b10 = rhs.B != (byte)0 ? DoubleUtil.ClampToByte(((double)byte.MaxValue - Math.Pow((double)(byte.MaxValue - lhs.B), 2.0)) / (double)rhs.B) : (byte)0;
+                //    byte r10 = rhs.R != byte.MinValue ? DoubleUtil.ClampToByte(((double)byte.MaxValue - Math.Pow((double)(byte.MaxValue - lhs.R), 2.0)) / (double)rhs.R) : byte.MinValue;
+                //    byte g10 = rhs.G != byte.MinValue ? DoubleUtil.ClampToByte(((double)byte.MaxValue - Math.Pow((double)(byte.MaxValue - lhs.G), 2.0)) / (double)rhs.G) : byte.MinValue;
+                //    byte b10 = rhs.B != byte.MinValue ? DoubleUtil.ClampToByte(((double)byte.MaxValue - Math.Pow((double)(byte.MaxValue - lhs.B), 2.0)) / (double)rhs.B) : byte.MinValue;
                 //    byte a13 = normalOp.Apply(lhs, rhs).A;
                 //    return ColorBgra.FromBgra(b10, g10, r10, a13);
 
@@ -490,22 +490,22 @@ namespace BlendModesPlus
 
                 case BlendModes.HardLight:
                     byte a18 = normalOp.Apply(lhs, rhs).A;
-                    byte r14 = rhs.R > (byte)128 ? Int32Util.ClampToByte(byte.MaxValue - (byte.MaxValue - lhs.R) * (byte.MaxValue - 2 * (rhs.R - 128)) / byte.MaxValue) : Int32Util.ClampToByte(2 * lhs.R * rhs.R / byte.MaxValue);
-                    byte g14 = rhs.G > (byte)128 ? Int32Util.ClampToByte(byte.MaxValue - (byte.MaxValue - lhs.G) * (byte.MaxValue - 2 * (rhs.G - 128)) / byte.MaxValue) : Int32Util.ClampToByte(2 * lhs.G * rhs.G / byte.MaxValue);
-                    byte b14 = rhs.B > (byte)128 ? Int32Util.ClampToByte(byte.MaxValue - (byte.MaxValue - lhs.B) * (byte.MaxValue - 2 * (rhs.G - 128)) / byte.MaxValue) : Int32Util.ClampToByte(2 * lhs.B * rhs.B / byte.MaxValue);
+                    byte r14 = rhs.R > 128 ? Int32Util.ClampToByte(byte.MaxValue - (byte.MaxValue - lhs.R) * (byte.MaxValue - 2 * (rhs.R - 128)) / byte.MaxValue) : Int32Util.ClampToByte(2 * lhs.R * rhs.R / byte.MaxValue);
+                    byte g14 = rhs.G > 128 ? Int32Util.ClampToByte(byte.MaxValue - (byte.MaxValue - lhs.G) * (byte.MaxValue - 2 * (rhs.G - 128)) / byte.MaxValue) : Int32Util.ClampToByte(2 * lhs.G * rhs.G / byte.MaxValue);
+                    byte b14 = rhs.B > 128 ? Int32Util.ClampToByte(byte.MaxValue - (byte.MaxValue - lhs.B) * (byte.MaxValue - 2 * (rhs.G - 128)) / byte.MaxValue) : Int32Util.ClampToByte(2 * lhs.B * rhs.B / byte.MaxValue);
                     return ColorBgra.FromBgra(b14, g14, r14, a18);
 
                 case BlendModes.HardMix:
                     byte a19 = normalOp.Apply(lhs, rhs).A;
-                    byte r15 = rhs.R >= byte.MaxValue - lhs.R ? byte.MaxValue : (byte)0;
-                    byte g15 = rhs.G >= byte.MaxValue - lhs.G ? byte.MaxValue : (byte)0;
-                    byte b15 = rhs.B >= byte.MaxValue - lhs.B ? byte.MaxValue : (byte)0;
+                    byte r15 = rhs.R >= byte.MaxValue - lhs.R ? byte.MaxValue : byte.MinValue;
+                    byte g15 = rhs.G >= byte.MaxValue - lhs.G ? byte.MaxValue : byte.MinValue;
+                    byte b15 = rhs.B >= byte.MaxValue - lhs.B ? byte.MaxValue : byte.MinValue;
                     return ColorBgra.FromBgra(b15, g15, r15, a19);
 
                 //case BlendModes.Heat:
-                //    byte r16 = lhs.R != (byte)0 ? DoubleUtil.ClampToByte(((double)byte.MaxValue - Math.Pow((double)(byte.MaxValue - rhs.R), 2.0)) / (double)lhs.R) : (byte)0;
-                //    byte g16 = lhs.G != (byte)0 ? DoubleUtil.ClampToByte(((double)byte.MaxValue - Math.Pow((double)(byte.MaxValue - rhs.G), 2.0)) / (double)lhs.G) : (byte)0;
-                //    byte b16 = lhs.B != (byte)0 ? DoubleUtil.ClampToByte(((double)byte.MaxValue - Math.Pow((double)(byte.MaxValue - rhs.B), 2.0)) / (double)lhs.B) : (byte)0;
+                //    byte r16 = lhs.R != byte.MinValue ? DoubleUtil.ClampToByte(((double)byte.MaxValue - Math.Pow((double)(byte.MaxValue - rhs.R), 2.0)) / (double)lhs.R) : byte.MinValue;
+                //    byte g16 = lhs.G != byte.MinValue ? DoubleUtil.ClampToByte(((double)byte.MaxValue - Math.Pow((double)(byte.MaxValue - rhs.G), 2.0)) / (double)lhs.G) : byte.MinValue;
+                //    byte b16 = lhs.B != byte.MinValue ? DoubleUtil.ClampToByte(((double)byte.MaxValue - Math.Pow((double)(byte.MaxValue - rhs.B), 2.0)) / (double)lhs.B) : byte.MinValue;
                 //    byte a20 = normalOp.Apply(lhs, rhs).A;
                 //    return ColorBgra.FromBgra(b16, g16, r16, a20);
 
@@ -529,9 +529,9 @@ namespace BlendModesPlus
                 //    return ColorBgra.FromBgra(b17, g17, r17, a22);
 
                 case BlendModes.Lighten:
-                    byte r18 = Int32Util.ClampToByte((int)Math.Max(lhs.R, rhs.R));
-                    byte g18 = Int32Util.ClampToByte((int)Math.Max(lhs.G, rhs.G));
-                    byte b18 = Int32Util.ClampToByte((int)Math.Max(lhs.B, rhs.B));
+                    byte r18 = Math.Max(lhs.R, rhs.R);
+                    byte g18 = Math.Max(lhs.G, rhs.G);
+                    byte b18 = Math.Max(lhs.B, rhs.B);
                     byte a23 = normalOp.Apply(lhs, rhs).A;
                     return ColorBgra.FromBgra(b18, g18, r18, a23);
 
@@ -587,23 +587,23 @@ namespace BlendModesPlus
                     return ColorBgra.FromBgra(b23, g23, r23, a30);
 
                 case BlendModes.Overlay:
-                    byte r24 = lhs.R < (byte)128 ? Int32Util.ClampToByte(2 * rhs.R * lhs.R / byte.MaxValue) : Int32Util.ClampToByte(byte.MaxValue - 2 * (byte.MaxValue - rhs.R) * (byte.MaxValue - lhs.R) / byte.MaxValue);
-                    byte g24 = lhs.G < (byte)128 ? Int32Util.ClampToByte(2 * rhs.G * lhs.G / byte.MaxValue) : Int32Util.ClampToByte(byte.MaxValue - 2 * (byte.MaxValue - rhs.G) * (byte.MaxValue - lhs.G) / byte.MaxValue);
-                    byte b24 = lhs.B < (byte)128 ? Int32Util.ClampToByte(2 * rhs.B * lhs.B / byte.MaxValue) : Int32Util.ClampToByte(byte.MaxValue - 2 * (byte.MaxValue - rhs.B) * (byte.MaxValue - lhs.B) / byte.MaxValue);
+                    byte r24 = lhs.R < 128 ? Int32Util.ClampToByte(2 * rhs.R * lhs.R / byte.MaxValue) : Int32Util.ClampToByte(byte.MaxValue - 2 * (byte.MaxValue - rhs.R) * (byte.MaxValue - lhs.R) / byte.MaxValue);
+                    byte g24 = lhs.G < 128 ? Int32Util.ClampToByte(2 * rhs.G * lhs.G / byte.MaxValue) : Int32Util.ClampToByte(byte.MaxValue - 2 * (byte.MaxValue - rhs.G) * (byte.MaxValue - lhs.G) / byte.MaxValue);
+                    byte b24 = lhs.B < 128 ? Int32Util.ClampToByte(2 * rhs.B * lhs.B / byte.MaxValue) : Int32Util.ClampToByte(byte.MaxValue - 2 * (byte.MaxValue - rhs.B) * (byte.MaxValue - lhs.B) / byte.MaxValue);
                     byte a31 = normalOp.Apply(lhs, rhs).A;
                     return ColorBgra.FromBgra(b24, g24, r24, a31);
 
                 case BlendModes.Phoenix:
-                    byte r25 = Int32Util.ClampToByte((int)Math.Min(lhs.R, rhs.R) - (int)Math.Max(lhs.R, rhs.R) + byte.MaxValue);
-                    byte g25 = Int32Util.ClampToByte((int)Math.Min(lhs.G, rhs.G) - (int)Math.Max(lhs.G, rhs.G) + byte.MaxValue);
-                    byte b25 = Int32Util.ClampToByte((int)Math.Min(lhs.B, rhs.B) - (int)Math.Max(lhs.B, rhs.B) + byte.MaxValue);
+                    byte r25 = Int32Util.ClampToByte(Math.Min(lhs.R, rhs.R) - Math.Max(lhs.R, rhs.R) + byte.MaxValue);
+                    byte g25 = Int32Util.ClampToByte(Math.Min(lhs.G, rhs.G) - Math.Max(lhs.G, rhs.G) + byte.MaxValue);
+                    byte b25 = Int32Util.ClampToByte(Math.Min(lhs.B, rhs.B) - Math.Max(lhs.B, rhs.B) + byte.MaxValue);
                     byte a32 = normalOp.Apply(lhs, rhs).A;
                     return ColorBgra.FromBgra(b25, g25, r25, a32);
 
                 case BlendModes.PinLight:
-                    byte r26 = 0;
-                    byte g26 = 0;
-                    byte b26 = 0;
+                    byte r26 = byte.MinValue;
+                    byte g26 = byte.MinValue;
+                    byte b26 = byte.MinValue;
                     if (lhs.R < 2 * rhs.R - byte.MaxValue)
                         r26 = Int32Util.ClampToByte(2 * rhs.R - byte.MaxValue);
                     if (lhs.G < 2 * rhs.G - byte.MaxValue)
@@ -654,7 +654,7 @@ namespace BlendModesPlus
                     byte b28 = Int32Util.ClampToByte(byte.MaxValue - ((byte.MaxValue - lhs.B) * (byte.MaxValue - rhs.B) >> 8));
                     byte a37 = normalOp.Apply(lhs, rhs).A;
                     return ColorBgra.FromBgra(b28, g28, r28, a37);
-                    
+
                 case BlendModes.SignedDifference:
                     byte r29 = Int32Util.ClampToByte((lhs.R - rhs.R) / 2 + 128);
                     byte g29 = Int32Util.ClampToByte((lhs.G - rhs.G) / 2 + 128);
@@ -664,22 +664,22 @@ namespace BlendModesPlus
 
                 //case BlendModes.SoftBurn:
                 //    byte a39 = normalOp.Apply(lhs, rhs).A;
-                //    byte r30 = lhs.R + rhs.R >= byte.MaxValue ? (rhs.R != (byte)0 ? Int32Util.ClampToByte((1 - 128 * (byte.MaxValue - lhs.R)) / rhs.R) : (byte)0) : (lhs.R != byte.MaxValue ? Int32Util.ClampToByte(128 * rhs.R / (byte.MaxValue - lhs.R)) : (byte)0);
-                //    byte g30 = lhs.G + rhs.G >= byte.MaxValue ? (rhs.G != (byte)0 ? Int32Util.ClampToByte((1 - 128 * (byte.MaxValue - lhs.G)) / rhs.G) : (byte)0) : (lhs.G != byte.MaxValue ? Int32Util.ClampToByte(128 * rhs.G / (byte.MaxValue - lhs.G)) : (byte)0);
-                //    byte b30 = lhs.B + rhs.B >= byte.MaxValue ? (rhs.B != (byte)0 ? Int32Util.ClampToByte((1 - 128 * (byte.MaxValue - lhs.B)) / rhs.B) : (byte)0) : (lhs.B != byte.MaxValue ? Int32Util.ClampToByte(128 * rhs.B / (byte.MaxValue - lhs.B)) : (byte)0);
+                //    byte r30 = lhs.R + rhs.R >= byte.MaxValue ? (rhs.R != byte.MinValue ? Int32Util.ClampToByte((1 - 128 * (byte.MaxValue - lhs.R)) / rhs.R) : byte.MinValue) : (lhs.R != byte.MaxValue ? Int32Util.ClampToByte(128 * rhs.R / (byte.MaxValue - lhs.R)) : byte.MinValue);
+                //    byte g30 = lhs.G + rhs.G >= byte.MaxValue ? (rhs.G != byte.MinValue ? Int32Util.ClampToByte((1 - 128 * (byte.MaxValue - lhs.G)) / rhs.G) : byte.MinValue) : (lhs.G != byte.MaxValue ? Int32Util.ClampToByte(128 * rhs.G / (byte.MaxValue - lhs.G)) : byte.MinValue);
+                //    byte b30 = lhs.B + rhs.B >= byte.MaxValue ? (rhs.B != byte.MinValue ? Int32Util.ClampToByte((1 - 128 * (byte.MaxValue - lhs.B)) / rhs.B) : byte.MinValue) : (lhs.B != byte.MaxValue ? Int32Util.ClampToByte(128 * rhs.B / (byte.MaxValue - lhs.B)) : byte.MinValue);
                 //    return ColorBgra.FromBgra(b30, g30, r30, a39);
 
                 //case BlendModes.SoftDodge:
                 //    byte a40 = normalOp.Apply(lhs, rhs).A;
-                //    byte r31 = lhs.R + rhs.R >= byte.MaxValue ? (lhs.R != (byte)0 ? Int32Util.ClampToByte((byte.MaxValue - 128 * (byte.MaxValue - rhs.R)) / lhs.R) : (byte)0) : (rhs.R != byte.MaxValue ? Int32Util.ClampToByte(128 * lhs.R / (byte.MaxValue - rhs.R)) : byte.MaxValue);
-                //    byte g31 = lhs.G + rhs.G >= byte.MaxValue ? (lhs.G != (byte)0 ? Int32Util.ClampToByte((byte.MaxValue - 128 * (byte.MaxValue - rhs.G)) / lhs.G) : (byte)0) : (rhs.G != byte.MaxValue ? Int32Util.ClampToByte(128 * lhs.G / (byte.MaxValue - rhs.G)) : byte.MaxValue);
-                //    byte b31 = lhs.B + rhs.B >= byte.MaxValue ? (lhs.B != (byte)0 ? Int32Util.ClampToByte((byte.MaxValue - 128 * (byte.MaxValue - rhs.B)) / lhs.B) : (byte)0) : (rhs.B != byte.MaxValue ? Int32Util.ClampToByte(128 * lhs.B / (byte.MaxValue - rhs.B)) : byte.MaxValue);
+                //    byte r31 = lhs.R + rhs.R >= byte.MaxValue ? (lhs.R != byte.MinValue ? Int32Util.ClampToByte((byte.MaxValue - 128 * (byte.MaxValue - rhs.R)) / lhs.R) : byte.MinValue) : (rhs.R != byte.MaxValue ? Int32Util.ClampToByte(128 * lhs.R / (byte.MaxValue - rhs.R)) : byte.MaxValue);
+                //    byte g31 = lhs.G + rhs.G >= byte.MaxValue ? (lhs.G != byte.MinValue ? Int32Util.ClampToByte((byte.MaxValue - 128 * (byte.MaxValue - rhs.G)) / lhs.G) : byte.MinValue) : (rhs.G != byte.MaxValue ? Int32Util.ClampToByte(128 * lhs.G / (byte.MaxValue - rhs.G)) : byte.MaxValue);
+                //    byte b31 = lhs.B + rhs.B >= byte.MaxValue ? (lhs.B != byte.MinValue ? Int32Util.ClampToByte((byte.MaxValue - 128 * (byte.MaxValue - rhs.B)) / lhs.B) : byte.MinValue) : (rhs.B != byte.MaxValue ? Int32Util.ClampToByte(128 * lhs.B / (byte.MaxValue - rhs.B)) : byte.MaxValue);
                 //    return ColorBgra.FromBgra(b31, g31, r31, a40);
 
                 case BlendModes.SoftLight:
-                    byte r32 = DoubleUtil.ClampToByte(rhs.R < 128 ? (float)(2 * ((lhs.R >> 1) + 64)) * ((float)rhs.R / (float)byte.MaxValue) : (float)(byte.MaxValue - (double)(2 * (byte.MaxValue - ((lhs.R >> 1) + 64))) * (double)(byte.MaxValue - rhs.R) / byte.MaxValue));
-                    byte g32 = DoubleUtil.ClampToByte(rhs.G < 128 ? (float)(2 * ((lhs.G >> 1) + 64)) * ((float)rhs.G / (float)byte.MaxValue) : (float)(byte.MaxValue - (double)(2 * (byte.MaxValue - ((lhs.G >> 1) + 64))) * (double)(byte.MaxValue - rhs.G) / byte.MaxValue));
-                    byte b32 = DoubleUtil.ClampToByte(rhs.B < 128 ? (float)(2 * ((lhs.B >> 1) + 64)) * ((float)rhs.B / (float)byte.MaxValue) : (float)(byte.MaxValue - (double)(2 * (byte.MaxValue - ((lhs.B >> 1) + 64))) * (double)(byte.MaxValue - rhs.B) / byte.MaxValue));
+                    byte r32 = DoubleUtil.ClampToByte(rhs.R < 128 ? 2 * ((lhs.R >> 1) + 64) * (rhs.R / (float)byte.MaxValue) : (float)(byte.MaxValue - 2 * (byte.MaxValue - ((lhs.R >> 1) + 64)) * (double)(byte.MaxValue - rhs.R) / byte.MaxValue));
+                    byte g32 = DoubleUtil.ClampToByte(rhs.G < 128 ? 2 * ((lhs.G >> 1) + 64) * (rhs.G / (float)byte.MaxValue) : (float)(byte.MaxValue - 2 * (byte.MaxValue - ((lhs.G >> 1) + 64)) * (double)(byte.MaxValue - rhs.G) / byte.MaxValue));
+                    byte b32 = DoubleUtil.ClampToByte(rhs.B < 128 ? 2 * ((lhs.B >> 1) + 64) * (rhs.B / (float)byte.MaxValue) : (float)(byte.MaxValue - 2 * (byte.MaxValue - ((lhs.B >> 1) + 64)) * (double)(byte.MaxValue - rhs.B) / byte.MaxValue));
                     byte a41 = normalOp.Apply(lhs, rhs).A;
                     return ColorBgra.FromBgra(b32, g32, r32, a41);
 
@@ -692,9 +692,9 @@ namespace BlendModesPlus
 
                 case BlendModes.VividLight:
                     byte a43 = normalOp.Apply(lhs, rhs).A;
-                    byte r34 = rhs.R <= (byte)128 ? Int32Util.ClampToByte(lhs.R + 2 * rhs.R - byte.MaxValue) : Int32Util.ClampToByte(lhs.R + 2 * (rhs.R - 128));
-                    byte g34 = rhs.G <= (byte)128 ? Int32Util.ClampToByte(lhs.G + 2 * rhs.G - byte.MaxValue) : Int32Util.ClampToByte(lhs.G + 2 * (rhs.G - 128));
-                    byte b34 = rhs.B <= (byte)128 ? Int32Util.ClampToByte(lhs.B + 2 * rhs.B - byte.MaxValue) : Int32Util.ClampToByte(lhs.B + 2 * (rhs.B - 128));
+                    byte r34 = rhs.R <= 128 ? Int32Util.ClampToByte(lhs.R + 2 * rhs.R - byte.MaxValue) : Int32Util.ClampToByte(lhs.R + 2 * (rhs.R - 128));
+                    byte g34 = rhs.G <= 128 ? Int32Util.ClampToByte(lhs.G + 2 * rhs.G - byte.MaxValue) : Int32Util.ClampToByte(lhs.G + 2 * (rhs.G - 128));
+                    byte b34 = rhs.B <= 128 ? Int32Util.ClampToByte(lhs.B + 2 * rhs.B - byte.MaxValue) : Int32Util.ClampToByte(lhs.B + 2 * (rhs.B - 128));
                     return ColorBgra.FromBgra(b34, g34, r34, a43);
 
                 case BlendModes.Yellow:
