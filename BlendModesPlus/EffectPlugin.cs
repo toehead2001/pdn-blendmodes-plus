@@ -1,4 +1,6 @@
 ﻿using PaintDotNet;
+using PaintDotNet.AppModel;
+using PaintDotNet.Clipboard;
 using PaintDotNet.Effects;
 using PaintDotNet.IndirectUI;
 using PaintDotNet.PropertySystem;
@@ -7,8 +9,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
-using System.Threading;
-using System.Windows.Forms;
 
 namespace BlendModesPlus
 {
@@ -203,53 +203,37 @@ namespace BlendModesPlus
             Rectangle selection = EnvironmentParameters.GetSelection(srcArgs.Surface.Bounds).GetBoundsInt();
             float selRatio = (float)selection.Width / selection.Height;
 
-            Bitmap loadedImaged = null;
+            Surface imageSurface = null;
+
             if (imageSource == ImageSources.File)
             {
                 if (File.Exists(FilePath))
                 {
+                    Bitmap loadedImage = null;
                     try
                     {
-                        loadedImaged = new Bitmap(FilePath);
+                        using (Bitmap tmpBmp = new Bitmap(FilePath))
+                        {
+                            loadedImage = new Bitmap(tmpBmp);
+                        }
                     }
                     catch
                     {
+                    }
+
+                    if (loadedImage != null)
+                    {
+                        imageSurface = Surface.CopyFromBitmap(loadedImage);
+                        loadedImage.Dispose();
                     }
                 }
             }
             else
             {
-                Thread t = new Thread(new ThreadStart(GetImageFromClipboard));
-                t.SetApartmentState(ApartmentState.STA);
-                t.Start();
-                t.Join();
-
-                void GetImageFromClipboard()
-                {
-                    try
-                    {
-                        IDataObject clippy = Clipboard.GetDataObject();
-                        if (clippy == null)
-                            return;
-
-                        if (Clipboard.ContainsData("PNG"))
-                        {
-                            Object pngObject = Clipboard.GetData("PNG");
-                            if (pngObject is MemoryStream pngStream)
-                                loadedImaged = (Bitmap)Image.FromStream(pngStream);
-                        }
-                        else if (clippy.GetDataPresent(DataFormats.Bitmap))
-                        {
-                            loadedImaged = (Bitmap)clippy.GetData(typeof(Bitmap));
-                        }
-                    }
-                    catch
-                    {
-                    }
-                }
+                imageSurface = this.Services.GetService<IClipboardService>().TryGetSurface();
             }
 
-            if (loadedImaged != null)
+            if (imageSurface != null)
             {
                 if (this.SurfaceToBlend == null)
                 {
@@ -259,8 +243,6 @@ namespace BlendModesPlus
                 {
                     this.SurfaceToBlend.Clear(ColorBgra.Transparent);
                 }
-
-                Surface imageSurface = Surface.CopyFromBitmap(loadedImaged);
 
                 switch (ImagePosition)
                 {
@@ -333,7 +315,6 @@ namespace BlendModesPlus
                 }
 
                 imageSurface.Dispose();
-                loadedImaged.Dispose();
             }
             else
             {
