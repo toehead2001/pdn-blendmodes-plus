@@ -27,7 +27,7 @@ namespace BlendModesPlus
         private static readonly Bitmap StaticIcon = new Bitmap(typeof(EffectPlugin), "EffectPluginIcon.png");
 
         public EffectPlugin()
-          : base("BlendModes Plus", StaticIcon, "Tools", EffectFlags.Configurable)
+          : base("BlendModes Plus", StaticIcon, "Tools", new EffectOptions { Flags = EffectFlags.Configurable })
         {
         }
 
