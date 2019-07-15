@@ -279,7 +279,7 @@ namespace BlendModesPlus
                             newSize.Width = (int)Math.Round(selMin * imageRatio);
                             newSize.Height = selMin;
                         }
-                        else if (imageSurface.Width > imageSurface.Height * selRatio)
+                        else// if (imageSurface.Width > imageSurface.Height * selRatio)
                         {
                             int selMax = Math.Max(selection.Width, selection.Height);
 
