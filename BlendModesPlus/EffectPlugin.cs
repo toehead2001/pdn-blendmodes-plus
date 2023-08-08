@@ -65,6 +65,7 @@ namespace BlendModesPlus
             Additive,
             Average,
             Blue,
+            CancelLight
             Color,
             ColorBurn,
             ColorDodge,
@@ -82,13 +83,17 @@ namespace BlendModesPlus
             Hue,
             Lighten,
             LinearBurn,
+            LinearCancelLight,
             LinearDodge,
             LinearLight,
             Luminosity,
             Magenta,
             Multiply,
+            MultiplyAdd,
+            MultiplyAddDark,
             Negation,
             Overlay,
+            OverlayMidtone,
             Phoenix,
             PinLight,
             Red,
@@ -148,6 +153,7 @@ namespace BlendModesPlus
             Amount3Control.SetValueDisplayName(BlendModes.Additive, "Additive");
             Amount3Control.SetValueDisplayName(BlendModes.Average, "Average");
             Amount3Control.SetValueDisplayName(BlendModes.Blue, "Blue");
+            Amount3Control.SetValueDisplayName(BlendModes.CancelLight, "Cancellation Light");
             Amount3Control.SetValueDisplayName(BlendModes.Color, "Color");
             Amount3Control.SetValueDisplayName(BlendModes.ColorBurn, "Color Burn");
             Amount3Control.SetValueDisplayName(BlendModes.ColorDodge, "Color Dodge");
@@ -165,13 +171,17 @@ namespace BlendModesPlus
             Amount3Control.SetValueDisplayName(BlendModes.Hue, "Hue");
             Amount3Control.SetValueDisplayName(BlendModes.Lighten, "Lighten");
             Amount3Control.SetValueDisplayName(BlendModes.LinearBurn, "Linear Burn");
+            Amount3Control.SetValueDisplayName(BlendModes.LinearCancelLight, "Linear Cancellation Light");
             Amount3Control.SetValueDisplayName(BlendModes.LinearDodge, "Linear Dodge");
             Amount3Control.SetValueDisplayName(BlendModes.LinearLight, "Linear Light");
             Amount3Control.SetValueDisplayName(BlendModes.Luminosity, "Luminosity");
             Amount3Control.SetValueDisplayName(BlendModes.Magenta, "Magenta");
             Amount3Control.SetValueDisplayName(BlendModes.Multiply, "Multiply");
+            Amount3Control.SetValueDisplayName(BlendModes.MultiplyAdd, "Multiply Add (Lighten)");
+            Amount3Control.SetValueDisplayName(BlendModes.MultiplyAddDark, "Multiply Add (Darken)");
             Amount3Control.SetValueDisplayName(BlendModes.Negation, "Negation");
-            Amount3Control.SetValueDisplayName(BlendModes.Overlay, "Overlay");
+            Amount3Control.SetValueDisplayName(BlendModes.Overlay, "Overlay (Highlights/Shadows)");
+            Amount3Control.SetValueDisplayName(BlendModes.OverlayMidtone, "Overlay (Midtones)");
             Amount3Control.SetValueDisplayName(BlendModes.Phoenix, "Phoenix");
             Amount3Control.SetValueDisplayName(BlendModes.PinLight, "Pin Light");
             Amount3Control.SetValueDisplayName(BlendModes.Red, "Red");
@@ -391,6 +401,13 @@ namespace BlendModesPlus
                     byte a3 = normalOp.Apply(lhs, rhs).A;
                     return ColorBgra.FromBgra(rhs.B, lhs.G, lhs.R, a3);
 
+                case BlendModes.CancelLight:
+                    byte a43 = normalOp.Apply(lhs, rhs).A;
+                    byte r34 = rhs.R >= 128 ? Int32Util.ClampToByte(lhs.R - (2 * rhs.R) + byte.MaxValue) : Int32Util.ClampToByte(lhs.R - (2 * (rhs.R - 128)));
+                    byte g34 = rhs.G >= 128 ? Int32Util.ClampToByte(lhs.G - (2 * rhs.G) + byte.MaxValue) : Int32Util.ClampToByte(lhs.G - (2 * (rhs.G - 128)));
+                    byte b34 = rhs.B >= 128 ? Int32Util.ClampToByte(lhs.B - (2 * rhs.B) + byte.MaxValue) : Int32Util.ClampToByte(lhs.B - (2 * (rhs.B - 128)));
+                    return ColorBgra.FromBgra(b34, g34, r34, a43);
+
                 //case BlendModes.Clone:
                 //    byte r3 = byte.MinValue;
                 //    byte g3 = byte.MinValue;
@@ -542,6 +559,13 @@ namespace BlendModesPlus
                     byte a24 = normalOp.Apply(lhs, rhs).A;
                     return ColorBgra.FromBgra(b19, g19, r19, a24);
 
+                case BlendModes.LinearCancelLight:
+                    byte r21 = Int32Util.ClampToByte(lhs.R - (2 * rhs.R) - byte.MaxValue);
+                    byte g21 = Int32Util.ClampToByte(lhs.G - (2 * rhs.G) - byte.MaxValue);
+                    byte b21 = Int32Util.ClampToByte(lhs.B - (2 * rhs.B) - byte.MaxValue);
+                    byte a26 = normalOp.Apply(lhs, rhs).A;
+                    return ColorBgra.FromBgra(b21, g21, r21, a26);
+
                 case BlendModes.LinearDodge:
                     byte r20 = Int32Util.ClampToByte(lhs.R + rhs.R);
                     byte g20 = Int32Util.ClampToByte(lhs.G + rhs.G);
@@ -579,6 +603,20 @@ namespace BlendModesPlus
                     byte a29 = normalOp.Apply(lhs, rhs).A;
                     return ColorBgra.FromBgra(b22, g22, r22, a29);
 
+                case BlendModes.MultiplyAdd:
+                    byte r22 = Int32Util.ClampToByte(lhs.R * rhs.R + lhs.R / byte.MaxValue);
+                    byte g22 = Int32Util.ClampToByte(lhs.G * rhs.G + lhs.G / byte.MaxValue);
+                    byte b22 = Int32Util.ClampToByte(lhs.B * rhs.B + lhs.B / byte.MaxValue);
+                    byte a29 = normalOp.Apply(lhs, rhs).A;
+                    return ColorBgra.FromBgra(b22, g22, r22, a29);
+
+                case BlendModes.MultiplyAddDark:
+                    byte r22 = Int32Util.ClampToByte(byte.MaxValue - (byte.MaxValue - lhs.R) * (byte.MaxValue - rhs.R) + (byte.MaxValue - lhs.R) / byte.MaxValue);
+                    byte g22 = Int32Util.ClampToByte(byte.MaxValue - (byte.MaxValue - lhs.G) * (byte.MaxValue - rhs.G) + (byte.MaxValue - lhs.G) / byte.MaxValue);
+                    byte b22 = Int32Util.ClampToByte(byte.MaxValue - (byte.MaxValue - lhs.B) * (byte.MaxValue - rhs.B) + (byte.MaxValue - lhs.B) / byte.MaxValue);
+                    byte a29 = normalOp.Apply(lhs, rhs).A;
+                    return ColorBgra.FromBgra(b22, g22, r22, a29);
+
                 case BlendModes.Negation:
                     byte r23 = Int32Util.ClampToByte(byte.MaxValue - Math.Abs(byte.MaxValue - lhs.R - rhs.R));
                     byte g23 = Int32Util.ClampToByte(byte.MaxValue - Math.Abs(byte.MaxValue - lhs.G - rhs.G));
@@ -587,6 +625,13 @@ namespace BlendModesPlus
                     return ColorBgra.FromBgra(b23, g23, r23, a30);
 
                 case BlendModes.Overlay:
+                    byte r24 = lhs.R > 128 ? Int32Util.ClampToByte(2 * rhs.R * lhs.R / byte.MaxValue) : Int32Util.ClampToByte(byte.MaxValue - 2 * (byte.MaxValue - rhs.R) * (byte.MaxValue - lhs.R) / byte.MaxValue);
+                    byte g24 = lhs.G > 128 ? Int32Util.ClampToByte(2 * rhs.G * lhs.G / byte.MaxValue) : Int32Util.ClampToByte(byte.MaxValue - 2 * (byte.MaxValue - rhs.G) * (byte.MaxValue - lhs.G) / byte.MaxValue);
+                    byte b24 = lhs.B > 128 ? Int32Util.ClampToByte(2 * rhs.B * lhs.B / byte.MaxValue) : Int32Util.ClampToByte(byte.MaxValue - 2 * (byte.MaxValue - rhs.B) * (byte.MaxValue - lhs.B) / byte.MaxValue);
+                    byte a31 = normalOp.Apply(lhs, rhs).A;
+                    return ColorBgra.FromBgra(b24, g24, r24, a31);
+
+                case BlendModes.OverlayMidtone:
                     byte r24 = lhs.R < 128 ? Int32Util.ClampToByte(2 * rhs.R * lhs.R / byte.MaxValue) : Int32Util.ClampToByte(byte.MaxValue - 2 * (byte.MaxValue - rhs.R) * (byte.MaxValue - lhs.R) / byte.MaxValue);
                     byte g24 = lhs.G < 128 ? Int32Util.ClampToByte(2 * rhs.G * lhs.G / byte.MaxValue) : Int32Util.ClampToByte(byte.MaxValue - 2 * (byte.MaxValue - rhs.G) * (byte.MaxValue - lhs.G) / byte.MaxValue);
                     byte b24 = lhs.B < 128 ? Int32Util.ClampToByte(2 * rhs.B * lhs.B / byte.MaxValue) : Int32Util.ClampToByte(byte.MaxValue - 2 * (byte.MaxValue - rhs.B) * (byte.MaxValue - lhs.B) / byte.MaxValue);
